@@ -18,6 +18,7 @@ class Solver{
 		void addBody(Body* b);
 		void addJoint(Joint* j);
 		void addMagnet(Magnet* m);
+		void addRay(mRay* r);
 		
 		void drawBodies(bool debug);
 		double GetProfile(std::string s);
@@ -41,6 +42,7 @@ class Solver{
 		
 		std::deque<Body*> body;
 		std::vector<Joint*> joint;
+		std::vector<mRay*> rays;
 		std::list<Manifold> contacts;
 		BroadPhase bp;
 		MagnetSolver ms;

@@ -132,13 +132,13 @@ void mCircle::setAABB()
 	aabb.max = Vector2D(radius + .05, radius + .05) + body->position;
 	aabb.min = Vector2D(-radius - .05, -radius -.05) + body->position;
 }
-bool mCircle::raycast(double& ans, Ray ray)
+bool mCircle::raycast(double& ans, mRay ray)
 {
 	return false;
 }
 mShape* mPolygon::Clone() const
 {
-	mPolygon *poly = new mPolygon();
+	mPolygon* poly = new mPolygon();
 	for(int i = 0; i < vertexCount; i++)
 	{
 		poly->pt[i] = pt[i];
@@ -202,7 +202,7 @@ void mPolygon::setAABB()
 	aabb.min.x -= .05;
 	aabb.min.y -= .05;
 }
-bool mPolygon::raycast(double& ans, Ray ray)
+bool mPolygon::raycast(double& ans, mRay ray)
 {
 	Vector2D p1 = body->transform.transpose() * (ray.origin - body->position);
 	Vector2D p2 = body->transform.transpose() * 
@@ -325,5 +325,46 @@ Vector2D mPolygon::GetSupport(const Vector2D& dir)
 		}
 	}
 	return bestVertex;
+}
+mShape* mRay::Clone() const
+{
+	return new mRay(origin, direction, length);
+}
+void mRay::setAABB()
+{
+	aabb.max.x = -FLT_MAX;
+	aabb.max.y = -FLT_MAX;
+	aabb.min.x = FLT_MAX;
+	aabb.min.y = FLT_MAX;
+	if (origin.x < aabb.min.x)	aabb.min.x = origin.x;
+	if (origin.y < aabb.min.y)	aabb.min.y = origin.y;
+	if (origin.x > aabb.max.x)	aabb.max.x = origin.x;
+	if (origin.y > aabb.max.y)	aabb.max.y = origin.y;
+	Vector2D v = origin + direction * length;
+	if (v.x < aabb.min.x)	aabb.min.x = v.x;
+	if (v.y < aabb.min.y)	aabb.min.y = v.y;
+	if (v.x > aabb.max.x)	aabb.max.x = v.x;
+	if (v.y > aabb.max.y)	aabb.max.y = v.y;
+	aabb.max.x += .05;
+	aabb.max.y += .05;
+	aabb.min.x -= .05;
+	aabb.min.y -= .05;
+}
+void mRay::prepareForBP()
+{
+	id = _shapes++;
+	aabb.shape = this;
+	setAABB();
+}
+bool mRay::cast()
+{
+	result = 2;
+	double tmp;
+	for (int i = 0; i < shapes.size(); i++)
+		if (shapes[i]->raycast(tmp, *this) and tmp < result)
+			result = tmp;
+	if (result <= 1)
+		return true;
+	return false;
 }
 

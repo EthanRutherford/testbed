@@ -40,7 +40,7 @@ class World{
 		
 		//test the IK
 		IKJoint* ik;
-		Ray ray;
+		mRay ray;
 };
 
 #endif

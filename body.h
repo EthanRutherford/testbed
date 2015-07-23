@@ -7,14 +7,8 @@
 #include <iostream>
 #define MaxPolyVertexCount 64
 
-struct Ray{
-	Ray() {}
-	Ray(Vector2D o, Vector2D d, double l) : origin(o), direction(d), length(l) {}
-	Vector2D origin;
-	Vector2D direction;
-	double length;
-};
 struct mShape;
+struct mRay;
 struct massData{
 	double I;
 	double iI;
@@ -60,6 +54,7 @@ struct mShape{
 	enum Type{
 		_circle,
 		_poly,
+		_ray,
 		_count
 	};
 	mShape() {}
@@ -69,7 +64,7 @@ struct mShape{
 	void DrawAABB();
 	virtual Type GetType() const = 0;
 	virtual void setAABB() = 0;
-	virtual bool raycast(double& ans, Ray ray) = 0;
+	virtual bool raycast(double& ans, mRay ray) = 0;
 	AABB* getAABB(){return &aabb;}
 	
 	Body* body;
@@ -84,7 +79,7 @@ struct mCircle : public mShape{
 	void Draw();
 	Type GetType() const {return _circle;}
 	void setAABB();
-	bool raycast(double& ans, Ray ray);
+	bool raycast(double&ans, mRay ray);
 };
 struct mPolygon : public mShape{
 	mShape* Clone() const;
@@ -92,13 +87,32 @@ struct mPolygon : public mShape{
 	void Draw();
 	Type GetType() const {return _poly;}
 	void setAABB();
-	bool raycast(double& ans, Ray ray);
+	bool raycast(double&ans, mRay ray);
 	void SetBox(double hw, double hh);
 	void Set(Vector2D* vertices, int count);
 	Vector2D GetSupport(const Vector2D& dir);
 	int vertexCount;
 	Vector2D pt[MaxPolyVertexCount];
 	Vector2D norm[MaxPolyVertexCount];
+};
+struct mRay : public mShape{
+	mShape* Clone() const;
+	massData ComputeMass(double density) {return massData();}
+	void Draw() {}
+	Type GetType() const {return _ray;}
+	void setAABB();
+	bool raycast(double&ans, mRay ray) {return false;}
+	mRay() {filtergroup = 0;}
+	mRay(Vector2D o, Vector2D d, double l) 
+		: origin(o), direction(d), length(l) {filtergroup = 0;}
+	void prepareForBP();
+	bool cast();
+	Vector2D origin;
+	Vector2D direction;
+	double length;
+	double result;
+	int filtergroup;
+	std::vector<mShape*> shapes;
 };
 bool AABBtest(AABB* a, AABB* b);
 

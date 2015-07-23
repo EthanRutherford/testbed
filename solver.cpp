@@ -44,6 +44,13 @@ void Solver::addMagnet(Magnet* m)
 	ms.AddMagnet(m);
 }
 
+void Solver::addRay(mRay* r)
+{
+	r->prepareForBP();
+	rays.emplace_back(r);
+	bp.addAABB(&r->aabb);
+}
+
 void Solver::drawBodies(bool debug)
 {
 	for (int i = 0; i < body.size(); i++)
@@ -195,6 +202,8 @@ void Solver::solvePositions(int time)
 void Solver::checkCol()
 {
 	std::unordered_set<BPPair> pair = bp.pair;
+	for (int i = 0; i < rays.size(); i++)
+		rays[i]->shapes.clear();
 	for (auto it = contacts.begin(); it != contacts.end(); it++)
 	{
 		it->Solve();
@@ -208,6 +217,19 @@ void Solver::checkCol()
 	}
 	for (auto it = pair.begin(); it != pair.end(); it++)
 	{
+		//handle rays
+		if (it->A->GetType() == mShape::_ray or it->B->GetType() == mShape::_ray)
+		{
+			if (it->A->GetType() != it->B->GetType())
+			{
+				mRay* r = (mRay*)(it->A->GetType() == mShape::_ray ? it->A : it->B);
+				mShape* s = (it->A->GetType() == mShape::_ray ? it->B : it->A);
+				if (r->filtergroup != s->body->filtergroup or r->filtergroup == 0)
+					r->shapes.emplace_back(s);
+			}
+			continue;
+		}
+		//normal collisions
 		Body* A = it->A->body;
 		Body* B = it->B->body;
 		if (A->mass.iM == 0 && B->mass.iM == 0)
