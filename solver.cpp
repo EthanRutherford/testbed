@@ -7,8 +7,8 @@ Solver::~Solver()
 
 void Solver::Solve(int time)
 {
-	for (int i = 0; i < rays.size(); i++)
-		rays[i]->setAABB();
+	for (int i = 0; i < ray.size(); i++)
+		ray[i]->setAABB();
 	if (applyg)
 		applyg(body);
 	else
@@ -49,7 +49,7 @@ void Solver::addMagnet(Magnet* m)
 void Solver::addRay(mRay* r)
 {
 	r->prepareForBP();
-	rays.emplace_back(r);
+	ray.emplace_back(r);
 	bp.addAABB(&r->aabb);
 }
 
@@ -204,8 +204,8 @@ void Solver::solvePositions(int time)
 void Solver::checkCol()
 {
 	std::unordered_set<BPPair> pair = bp.pair;
-	for (int i = 0; i < rays.size(); i++)
-		rays[i]->shapes.clear();
+	for (int i = 0; i < ray.size(); i++)
+		ray[i]->shapes.clear();
 	for (auto it = contacts.begin(); it != contacts.end(); it++)
 	{
 		it->Solve();

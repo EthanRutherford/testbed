@@ -42,7 +42,7 @@ class Solver{
 		
 		std::deque<Body*> body;
 		std::vector<Joint*> joint;
-		std::vector<mRay*> rays;
+		std::vector<mRay*> ray;
 		std::list<Manifold> contacts;
 		BroadPhase bp;
 		MagnetSolver ms;
