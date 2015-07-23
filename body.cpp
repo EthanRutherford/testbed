@@ -134,6 +134,20 @@ void mCircle::setAABB()
 }
 bool mCircle::raycast(double& ans, mRay ray)
 {
+	Vector2D s = ray.origin - body->position;
+	double b = dot(s, s) - radius * radius;
+	Vector2D r = ray.direction * ray.length;
+	double c = dot(s, r);
+	double rr = dot(r, r);
+	double sigma = c * c - rr * b;
+	if (sigma < 0 or rr < EPSILON)
+		return false;
+	float a = -(c + sqrt(sigma));
+	if (a >= 0 and a <= rr)
+	{
+		ans = a / rr;
+		return true;
+	}
 	return false;
 }
 mShape* mPolygon::Clone() const
@@ -332,23 +346,12 @@ mShape* mRay::Clone() const
 }
 void mRay::setAABB()
 {
-	aabb.max.x = -FLT_MAX;
-	aabb.max.y = -FLT_MAX;
-	aabb.min.x = FLT_MAX;
-	aabb.min.y = FLT_MAX;
-	if (origin.x < aabb.min.x)	aabb.min.x = origin.x;
-	if (origin.y < aabb.min.y)	aabb.min.y = origin.y;
-	if (origin.x > aabb.max.x)	aabb.max.x = origin.x;
-	if (origin.y > aabb.max.y)	aabb.max.y = origin.y;
-	Vector2D v = origin + direction * length;
-	if (v.x < aabb.min.x)	aabb.min.x = v.x;
-	if (v.y < aabb.min.y)	aabb.min.y = v.y;
-	if (v.x > aabb.max.x)	aabb.max.x = v.x;
-	if (v.y > aabb.max.y)	aabb.max.y = v.y;
-	aabb.max.x += .05;
-	aabb.max.y += .05;
-	aabb.min.x -= .05;
-	aabb.min.y -= .05;
+	Vector2D o = origin;
+	Vector2D e = origin + direction * length;
+	aabb.max.x = (o.x > e.x ? o.x : e.x) + .05;
+	aabb.max.y = (o.y > e.y ? o.y : e.y) + .05;
+	aabb.min.x = (o.x < e.x ? o.x : e.x) - .05;
+	aabb.min.y = (o.y < e.y ? o.y : e.y) - .05;
 }
 void mRay::prepareForBP()
 {

@@ -7,6 +7,8 @@ Solver::~Solver()
 
 void Solver::Solve(int time)
 {
+	for (int i = 0; i < rays.size(); i++)
+		rays[i]->setAABB();
 	if (applyg)
 		applyg(body);
 	else

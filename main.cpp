@@ -175,8 +175,8 @@ void Mouse(int button, int state, int x, int y)
 			world->addRope(X, Y);
 		else
 			//set = !set;
-			//world->addCircle(X, Y);
-			world->addMagnet(X, Y);
+			world->addCircle(X, Y);
+			//world->addMagnet(X, Y);
 			//world->addBox(X, Y, 10, 10, false);
 			//world->addComposite(X, Y);
 	}
