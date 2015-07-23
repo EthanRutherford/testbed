@@ -7,6 +7,13 @@
 #include <iostream>
 #define MaxPolyVertexCount 64
 
+struct Ray{
+	Ray() {}
+	Ray(Vector2D o, Vector2D d, double l) : origin(o), direction(d), length(l) {}
+	Vector2D origin;
+	Vector2D direction;
+	double length;
+};
 struct mShape;
 struct massData{
 	double I;
@@ -62,6 +69,7 @@ struct mShape{
 	void DrawAABB();
 	virtual Type GetType() const = 0;
 	virtual void setAABB() = 0;
+	virtual bool raycast(double& ans, Ray ray) = 0;
 	AABB* getAABB(){return &aabb;}
 	
 	Body* body;
@@ -76,6 +84,7 @@ struct mCircle : public mShape{
 	void Draw();
 	Type GetType() const {return _circle;}
 	void setAABB();
+	bool raycast(double& ans, Ray ray);
 };
 struct mPolygon : public mShape{
 	mShape* Clone() const;
@@ -83,6 +92,7 @@ struct mPolygon : public mShape{
 	void Draw();
 	Type GetType() const {return _poly;}
 	void setAABB();
+	bool raycast(double& ans, Ray ray);
 	void SetBox(double hw, double hh);
 	void Set(Vector2D* vertices, int count);
 	Vector2D GetSupport(const Vector2D& dir);

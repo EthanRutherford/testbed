@@ -14,6 +14,7 @@ void gravity(std::deque<Body*>& body)
 
 World::World()
 {
+	r(-2401, 40);
 	addCar(-2400, 30);
 	addBox(0,0,6000,5,true);
 	man.Initialize(-2300, 30);
@@ -227,6 +228,13 @@ void World::drawBodies(bool debug)
 		glVertex2d(man.CoM.x, man.CoM.y);
 		glEnd();
 	}
+	double length = 1;
+	car->shape[0]->raycast(length, ray);
+	Vector2D point = ray.origin + ray.direction * length * ray.length;
+	glBegin(GL_LINE_STRIP);
+	glVertex2d(ray.origin.x, ray.origin.y);
+	glVertex2d(point.x, point.y);
+	glEnd();
 }
 
 void World::Solve(int time)

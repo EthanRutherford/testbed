@@ -132,6 +132,10 @@ void mCircle::setAABB()
 	aabb.max = Vector2D(radius + .05, radius + .05) + body->position;
 	aabb.min = Vector2D(-radius - .05, -radius -.05) + body->position;
 }
+bool mCircle::raycast(double& ans, Ray ray)
+{
+	return false;
+}
 mShape* mPolygon::Clone() const
 {
 	mPolygon *poly = new mPolygon();
@@ -197,6 +201,44 @@ void mPolygon::setAABB()
 	aabb.max.y += .05;
 	aabb.min.x -= .05;
 	aabb.min.y -= .05;
+}
+bool mPolygon::raycast(double& ans, Ray ray)
+{
+	Vector2D p1 = body->transform.transpose() * (ray.origin - body->position);
+	Vector2D p2 = body->transform.transpose() * 
+		(ray.origin + ray.direction * ray.length - body->position);
+	Vector2D d = p2 - p1;
+	
+	double low = 0, hi = ray.length;
+	bool found = false;
+	for (int i = 0; i < vertexCount; i++)
+	{
+		double num = dot(norm[i], pt[i] -p1);
+		double den = dot(norm[i], d);
+		if (den == 0)
+		{
+			if (num < 0)
+				return false;
+		}
+		else
+		{
+			if (den < 0 and num < low * den)
+			{
+				low = num / den;
+				found = true;
+			}
+			else if (den > 0 and num < hi * den)
+				hi = num / den;
+		}
+	}
+	if (hi < low)
+		return false;
+	if (found)
+	{
+		ans = low;
+		return true;
+	}
+	return false;
 }
 void mPolygon::SetBox(double hw, double hh)
 {

@@ -30,6 +30,8 @@ class World{
 		void setBrake() {motor->SetMotor(true, 0, 200000);}
 		void setOff() {motor->SetMotor(true, 0, 1000);}
 		Vector2D getPos() {return car->position;}
+		void r(double x, double y) 
+		{ray.origin.Set(x,y);ray.direction.Set(0,-1);ray.length = 100;}
 	private:
 		Solver solver;
 		WheelJoint* motor;
@@ -38,6 +40,7 @@ class World{
 		
 		//test the IK
 		IKJoint* ik;
+		Ray ray;
 };
 
 #endif
