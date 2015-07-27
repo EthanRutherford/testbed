@@ -26,16 +26,16 @@ class World{
 		void Solve(int time);
 		double GetProfile(std::string s) {return solver.GetProfile(s);}
 		
-		void setSpeed(double speed) {motor->SetMotor(true, speed, 100000);}
-		void setBrake() {motor->SetMotor(true, 0, 200000);}
-		void setOff() {motor->SetMotor(true, 0, 1000);}
+		void setSpeed(double speed) {motor->SetMotor(true, speed, 25);}
+		void setBrake() {motor->SetMotor(true, 0, 50);}
+		void setOff() {motor->SetMotor(true, 0, 1);}
 		Vector2D getPos() {return car->position;}
 		void r(double x, double y) 
 		{ray.origin.Set(x,y);ray.direction.Set(0,-1);ray.length = 100;}
 	private:
 		Solver solver;
 		WheelJoint* motor;
-		Man2 man;
+		//Man2 man;
 		Body* car;
 		
 		//test the IK

@@ -15,7 +15,7 @@ World* world;
 int lastfpscheck = 0;
 int fps = 0;
 int frame = 0;
-double scale = 1;
+double scale = 25;
 bool debug = false;
 
 std::string to_string(double number)
@@ -121,8 +121,8 @@ void Display()
 	for (int i = 0; i < 61; i++)
 	{
 		glBegin(GL_LINE_STRIP);
-		glVertex2d(-3000 + i*100, 1000);
-		glVertex2d(-3000 + i*100, -1000);
+		glVertex2d(-300 + i*10, 100);
+		glVertex2d(-300 + i*10, -100);
 		glEnd();
 	}
 	
@@ -175,9 +175,9 @@ void Mouse(int button, int state, int x, int y)
 			world->addRope(X, Y);
 		else
 			//set = !set;
-			world->addCircle(X, Y);
+			//world->addCircle(X, Y);
 			//world->addMagnet(X, Y);
-			//world->addBox(X, Y, 10, 10, false);
+			world->addBox(X, Y, 1, 1, false);
 			//world->addComposite(X, Y);
 	}
 	if (button == GLUT_RIGHT_BUTTON and state == GLUT_DOWN)

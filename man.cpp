@@ -154,45 +154,45 @@ void Man::Rotateto(int j, double angle)
 void Man2::Initialize(double x, double y)
 {
 	Vector2D list1[] = {
-		Vector2D(-3, 6),
-		Vector2D(3, 6),
-		Vector2D(1, -5),
-		Vector2D(-2, -5)
+		Vector2D(-.3, .6),
+		Vector2D(.3, .6),
+		Vector2D(.1, -.5),
+		Vector2D(-.2, -.5)
 	};
 	Vector2D list2[] = {
-		Vector2D(-2, 5),
-		Vector2D(2, 5),
-		Vector2D(1, -4),
-		Vector2D(-1, -4)
+		Vector2D(-.2, .5),
+		Vector2D(.2, .5),
+		Vector2D(.1, -.4),
+		Vector2D(-.1, -.4)
 	};
 	Vector2D list3[] = {
-		Vector2D(-1, 4),
-		Vector2D(1, 4),
-		Vector2D(0, -4)
+		Vector2D(-.1, .4),
+		Vector2D(.1, .4),
+		Vector2D(0, -.4)
 	};
 	Vector2D list4[] = {
-		Vector2D(-2, 3),
-		Vector2D(2, 3),
-		Vector2D(1, -2),
-		Vector2D(-2, -2)
+		Vector2D(-.2, .3),
+		Vector2D(.2, .3),
+		Vector2D(.1, -.2),
+		Vector2D(-.2, -.2)
 	};
 	Vector2D list5[] = {
-		Vector2D(-1, 4),
-		Vector2D(2, 4),
-		Vector2D(2, -4),
-		Vector2D(-1, -4)
+		Vector2D(-.1, .4),
+		Vector2D(.2, .4),
+		Vector2D(.2, -.4),
+		Vector2D(-.1, -.4)
 	};
 	Vector2D list6[] = {
-		Vector2D(-1, 4),
-		Vector2D(2, 4),
-		Vector2D(1, -4),
-		Vector2D(-1, -4)
+		Vector2D(-.1, .4),
+		Vector2D(.2, .4),
+		Vector2D(.1, -.4),
+		Vector2D(-.1, -.4)
 	};
 	Vector2D list7[] = {
-		Vector2D(-1, 1),
-		Vector2D(4, 0),
-		Vector2D(4, -1),
-		Vector2D(-1, -1)
+		Vector2D(-.1, .1),
+		Vector2D(.4, 0),
+		Vector2D(.4, -.1),
+		Vector2D(-.1, -.1)
 	};
 	mPolygon poly1, poly2, poly3, poly4, poly5, poly6, poly7;
 	poly1.Set(list1, 4);
@@ -205,14 +205,14 @@ void Man2::Initialize(double x, double y)
 	{ /* BODIES */
 	mShape* shape = &poly3;	body.emplace_back(new Body(&shape, 1, x, y, 1, false));
 	shape = &poly2;			body.emplace_back(new Body(&shape, 1, x, y, 1, false));
-	shape = &poly7;			body.emplace_back(new Body(&shape, 1, x, y-20, 1, false));
-	shape = &poly6;			body.emplace_back(new Body(&shape, 1, x, y-16, 1, false));
-	shape = &poly5;			body.emplace_back(new Body(&shape, 1, x, y-8, 1, false));
+	shape = &poly7;			body.emplace_back(new Body(&shape, 1, x, y-2, 1, false));
+	shape = &poly6;			body.emplace_back(new Body(&shape, 1, x, y-1.6, 1, false));
+	shape = &poly5;			body.emplace_back(new Body(&shape, 1, x, y-.8, 1, false));
 	shape = &poly1;			body.emplace_back(new Body(&shape, 1, x, y, 1, false));
-	shape = &poly4;			body.emplace_back(new Body(&shape, 1, x, y+6, 1, false));
-	shape = &poly5;			body.emplace_back(new Body(&shape, 1, x, y-8, 1, false));
-	shape = &poly6;			body.emplace_back(new Body(&shape, 1, x, y-16, 1, false));
-	shape = &poly7;			body.emplace_back(new Body(&shape, 1, x, y-20, 1, false));
+	shape = &poly4;			body.emplace_back(new Body(&shape, 1, x, y+.6, 1, false));
+	shape = &poly5;			body.emplace_back(new Body(&shape, 1, x, y-.8, 1, false));
+	shape = &poly6;			body.emplace_back(new Body(&shape, 1, x, y-1.6, 1, false));
+	shape = &poly7;			body.emplace_back(new Body(&shape, 1, x, y-2, 1, false));
 	shape = &poly2;			body.emplace_back(new Body(&shape, 1, x, y, 1, false));
 	shape = &poly3;			body.emplace_back(new Body(&shape, 1, x, y, 1, false));
 	}
@@ -229,27 +229,27 @@ void Man2::Initialize(double x, double y)
 	//front arm =		10
 	//front forearm =	11
 	{ /* JOINTS */
-		joint.emplace_back(new RevJoint(body[5], body[1], Vector2D(0, 5), Vector2D(0, 4.5)));
+		joint.emplace_back(new RevJoint(body[5], body[1], Vector2D(0, .5), Vector2D(0, .45)));
 		//((RevJoint*)joint.back())->SetLimit(true, pi, -(3*pi)/8);
-		joint.emplace_back(new RevJoint(body[5], body[10], Vector2D(0, 5), Vector2D(0, 4.5)));
+		joint.emplace_back(new RevJoint(body[5], body[10], Vector2D(0, .5), Vector2D(0, .45)));
 		//((RevJoint*)joint.back())->SetLimit(true, pi, -(3*pi)/8);
-		joint.emplace_back(new RevJoint(body[1], body[0], Vector2D(0, -4.5), Vector2D(0, 3)));
+		joint.emplace_back(new RevJoint(body[1], body[0], Vector2D(0, -.45), Vector2D(0, .3)));
 		((RevJoint*)joint.back())->SetLimit(true, (3*pi)/4, 0);
-		joint.emplace_back(new RevJoint(body[10], body[11], Vector2D(0, -4.5), Vector2D(0, 3)));
+		joint.emplace_back(new RevJoint(body[10], body[11], Vector2D(0, -.45), Vector2D(0, .3)));
 		((RevJoint*)joint.back())->SetLimit(true, (3*pi)/4, 0);
-		joint.emplace_back(new RevJoint(body[5], body[6], Vector2D(0, 5.5), Vector2D(0, -2.5)));
+		joint.emplace_back(new RevJoint(body[5], body[6], Vector2D(0, .55), Vector2D(0, -.25)));
 		((RevJoint*)joint.back())->SetLimit(true, pi/6, -pi/6);
-		joint.emplace_back(new RevJoint(body[5], body[4], Vector2D(-.5, -5), Vector2D(.5, 4)));
+		joint.emplace_back(new RevJoint(body[5], body[4], Vector2D(-.05, -.5), Vector2D(.05, .4)));
 		((RevJoint*)joint.back())->SetLimit(true, (3*pi)/4, -pi/6);
-		joint.emplace_back(new RevJoint(body[5], body[7], Vector2D(-.5, -5), Vector2D(.5, 4)));
+		joint.emplace_back(new RevJoint(body[5], body[7], Vector2D(-.05, -.5), Vector2D(.05, .4)));
 		((RevJoint*)joint.back())->SetLimit(true, (3*pi)/4, -pi/6);
-		joint.emplace_back(new RevJoint(body[4], body[3], Vector2D(.5, -4), Vector2D(.5, 4)));
+		joint.emplace_back(new RevJoint(body[4], body[3], Vector2D(.05, -.4), Vector2D(.05, .4)));
 		((RevJoint*)joint.back())->SetLimit(true, 0, -(3*pi)/4);
-		joint.emplace_back(new RevJoint(body[7], body[8], Vector2D(.5, -4), Vector2D(.5, 4)));
+		joint.emplace_back(new RevJoint(body[7], body[8], Vector2D(.05, -.4), Vector2D(.05, .4)));
 		((RevJoint*)joint.back())->SetLimit(true, 0, -(3*pi)/4);
-		joint.emplace_back(new RevJoint(body[3], body[2], Vector2D(.5, -4), Vector2D(.5, .5)));
+		joint.emplace_back(new RevJoint(body[3], body[2], Vector2D(.05, -.4), Vector2D(.05, .05)));
 		((RevJoint*)joint.back())->SetLimit(true, pi/36, -pi/2);
-		joint.emplace_back(new RevJoint(body[8], body[9], Vector2D(.5, -4), Vector2D(.5, .5)));
+		joint.emplace_back(new RevJoint(body[8], body[9], Vector2D(.05, -.4), Vector2D(.05, .05)));
 		((RevJoint*)joint.back())->SetLimit(true, pi/36, -pi/2);
 	}
 	//back shoulder joint =		0
@@ -266,7 +266,7 @@ void Man2::Initialize(double x, double y)
 	for (int i = 0; i < body.size(); i++)
 		body[i]->filtergroup = 1;
 	for (int i = 0; i < joint.size(); i++)
-		((RevJoint*)joint[i])->SetMotor(true, 0, 2000000);
+		((RevJoint*)joint[i])->SetMotor(true, 0, 2000);
 	b = j = 0;
 }
 
@@ -322,43 +322,43 @@ void Man2::Upright(Vector2D down)
 	if (body[5]->orient > 2*pi/180)
 	{
 		if (body[backf]->contact)
-			((RevJoint*)joint[backh])->SetMotor(true, 1, 20000);
+			((RevJoint*)joint[backh])->SetMotor(true, 1, 20);
 		else
-			((RevJoint*)joint[backh])->SetMotor(true, -1, 20000);
+			((RevJoint*)joint[backh])->SetMotor(true, -1, 20);
 		if (body[frontf]->contact)
-			((RevJoint*)joint[fronth])->SetMotor(true, 1, 20000);
+			((RevJoint*)joint[fronth])->SetMotor(true, 1, 20);
 		else
-			((RevJoint*)joint[fronth])->SetMotor(true, -1, 20000);
+			((RevJoint*)joint[fronth])->SetMotor(true, -1, 20);
 	}
 	else if (body[5]->orient < -2*pi/180)
 	{
 		if (body[backf]->contact)
-			((RevJoint*)joint[backh])->SetMotor(true, -1, 20000);
+			((RevJoint*)joint[backh])->SetMotor(true, -1, 20);
 		else
-			((RevJoint*)joint[backh])->SetMotor(true, 1, 20000);
+			((RevJoint*)joint[backh])->SetMotor(true, 1, 20);
 		if (body[frontf]->contact)
-			((RevJoint*)joint[fronth])->SetMotor(true, -1, 20000);
+			((RevJoint*)joint[fronth])->SetMotor(true, -1, 20);
 		else
-			((RevJoint*)joint[fronth])->SetMotor(true, 1, 20000);
+			((RevJoint*)joint[fronth])->SetMotor(true, 1, 20);
 	}
 	else
 	{
-		((RevJoint*)joint[fronth])->SetMotor(true, 0, 20000);
-		((RevJoint*)joint[backh])->SetMotor(true, 0, 20000);
+		((RevJoint*)joint[fronth])->SetMotor(true, 0, 20);
+		((RevJoint*)joint[backh])->SetMotor(true, 0, 20);
 	}
 	if (body[5]->position.x > body[frontc]->position.x)
 	{
 		if (body[frontf]->contact)
-			((RevJoint*)joint[fronta])->SetMotor(true, -.5, 20000);
+			((RevJoint*)joint[fronta])->SetMotor(true, -.5, 20);
 		if (body[backf]->contact)
-			((RevJoint*)joint[backa])->SetMotor(true, -.5, 20000);
+			((RevJoint*)joint[backa])->SetMotor(true, -.5, 20);
 	}
 	else if (body[5]->position.x < body[backc]->position.x)
 	{
 		if (body[frontf]->contact)
-			((RevJoint*)joint[fronta])->SetMotor(true, .5, 20000);
+			((RevJoint*)joint[fronta])->SetMotor(true, .5, 20);
 		if (body[backf]->contact)
-			((RevJoint*)joint[backa])->SetMotor(true, .5, 20000);
+			((RevJoint*)joint[backa])->SetMotor(true, .5, 20);
 	}
 	else
 	{
@@ -368,8 +368,8 @@ void Man2::Upright(Vector2D down)
 	
 	return;
 	
-	((RevJoint*)joint[backh])->SetMotor(true, 0, 200000);
-	((RevJoint*)joint[fronth])->SetMotor(true, 0, 200000);
+	((RevJoint*)joint[backh])->SetMotor(true, 0, 200);
+	((RevJoint*)joint[fronth])->SetMotor(true, 0, 200);
 	if (body[backt]->position.x > CoM.x)
 	{
 		if (body[backf]->contact)
@@ -426,10 +426,10 @@ void Man2::Rotateto(int j, double angle)
 	double curangle = ((RevJoint*)joint[j])->GetAngle();
 	double diff = curangle - angle;
 	if (std::abs(diff) < pi/180)
-		((RevJoint*)joint[j])->SetMotor(true, 0, 20000);
+		((RevJoint*)joint[j])->SetMotor(true, 0, 20);
 	else if (curangle < angle)
-		((RevJoint*)joint[j])->SetMotor(true, 1, 20000);
+		((RevJoint*)joint[j])->SetMotor(true, 1, 20);
 	else if (curangle > angle)
-		((RevJoint*)joint[j])->SetMotor(true, -1, 20000);
+		((RevJoint*)joint[j])->SetMotor(true, -1, 20);
 }
 
