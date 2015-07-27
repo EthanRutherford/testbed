@@ -49,8 +49,8 @@ Body* World::addBox(double x, double y, double w, double h, bool fixed)
 
 void World::addLinked(double x, double y)
 {
-	Body* b1 = addBox(x-5, y, 1, 1, false);
-	Body* b2 = addBox(x+5, y, 1, 1, false);
+	Body* b1 = addBox(x-.5, y, 1, 1, false);
+	Body* b2 = addBox(x+.5, y, 1, 1, false);
 	b1->restitution = .3;
 	b2->restitution = .3;
 	RevJoint* j = new RevJoint(b1, b2, Vector2D(.5, -.5), Vector2D(-.5, -.5));

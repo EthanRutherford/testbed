@@ -92,7 +92,7 @@ void Idle()
 		buffer['x'] = false;
 	}
 	if (buffer['a'])
-		world->setSpeed(75);
+		world->setSpeed(25);
 	else if (buffer['d'])
 		world->setSpeed(-75);
 	else if (buffer['s'])

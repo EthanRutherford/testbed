@@ -50,7 +50,7 @@ void Manifold::Initialize()
 		velocityBias[i] = 0.0;
 		Vector2D rv = vB + cross(wB, rB) - vA - cross(wA, rA);
 		double vRel = dot(normal, rv);
-		if (vRel < -2.0)
+		if (vRel < -1.0)
 			velocityBias[i] = -e * vRel;
 	}
 	if (contact_count == 2)
@@ -287,7 +287,7 @@ void Manifold::PositionalCorrection()
 		}
 		Vector2D rA = point - A->body->position;
 		Vector2D rB = point - B->body->position;
-		double C = Clamp(percent * (separation + k_slop), -2, 0);
+		double C = Clamp(percent * (separation + k_slop), -.2, 0);
 		double rnA = cross(rA, normal);
 		double rnB = cross(rB, normal);
 		double K = mA + mB + iA * rnA * rnA + iB * rnB * rnB;
