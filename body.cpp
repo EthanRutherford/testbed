@@ -25,7 +25,8 @@ Body::Body(mShape** s, int num, double x, double y, double density, bool p)
 	SetMass(density);
 	nodraw = false;
 	contact = false;
-	//shape->setAABB();
+	for (int i = 0; i < shape.size(); i++)
+		shape[i]->setAABB();
 }
 Body::~Body()
 {
