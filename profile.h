@@ -1,3 +1,6 @@
+#ifndef PROFILE_H
+#define PROFILE_H
+
 #include <windows.h>
 #include <deque>
 
@@ -39,3 +42,20 @@ class Profile{
 		std::deque<double> times;
 };
 
+inline double elapsedTime()
+{
+	static LARGE_INTEGER start;
+	static LARGE_INTEGER now;
+	static LARGE_INTEGER freq;
+	if (freq.QuadPart == 0)
+		QueryPerformanceFrequency(&freq);
+	if (start.QuadPart == 0)
+	{
+		QueryPerformanceCounter(&start);
+		return double(start.QuadPart) / freq.QuadPart;
+	}
+	QueryPerformanceCounter(&now);
+	return double(now.QuadPart - start.QuadPart) / freq.QuadPart;
+}
+
+#endif

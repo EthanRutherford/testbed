@@ -3,18 +3,17 @@
 #include <gl/freeglut.h>
 #include <gl/glwindowpos.h>
 #include "world.h"
+#include "profile.h"
 #include <sstream>
-#include <iostream>
 
 int _screenw;
 int _screenh;
-int lasttime = 0;
+double lasttime = 0;
+double fps = 0;
+
 bool buffer[256];
 bool sbuffer[256];
 World* world;
-int lastfpscheck = 0;
-int fps = 0;
-int frame = 0;
 double scale = 25;
 bool debug = false;
 
@@ -58,21 +57,12 @@ void Reshape (int width, int height)
     glLoadIdentity();
 }
 void Idle()
-{
-	frame++;
-	int curtime = glutGet(GLUT_ELAPSED_TIME);
-	int diff = curtime - lasttime;
+{	
+	double curtime = elapsedTime();
+	double diff = curtime - lasttime;
 	lasttime = curtime;
 	
-	if (diff > 20)
-		diff = 20;
-	
-	if (curtime - lastfpscheck >= 1000)
-	{
-		fps = frame;
-		frame = 0;
-		lastfpscheck = curtime;
-	}
+	fps = (1/diff * .1) + (fps * .9);
 	
 	if (buffer['r'])
 	{
@@ -81,9 +71,9 @@ void Idle()
 	}
 	
 	if (buffer['+'])
-		scale *= 1 + diff/1000.0;
+		scale *= 1 + diff;
 	if (buffer['-'])
-		scale /= 1 + diff/1000.0;
+		scale /= 1 + diff;
 	if (buffer[13])
 		scale = 1;
 	if (buffer['x'])
@@ -100,7 +90,7 @@ void Idle()
 	else
 		world->setOff();
 	
-	world->Solve(diff);
+	world->Solve((double)1/60);
 }
 void setWindow(double left, double right, double bottom, double top)
 {
@@ -132,7 +122,7 @@ void Display()
 	double SLV = world->GetProfile("slv");
 	double MV = world->GetProfile("mv");
 	glColor3f(1,1,1);
-	outputNum(fps, 10, _screenh-20, true);
+	outputNum(int(fps + .5), 10, _screenh-20, true);
 	outputString("bp:", 10, _screenh-40, true);
 	outputNum(((int)(BP*1000000000))/1000000.0, 50, _screenh-40, true);
 	outputString("np:", 10, _screenh-60, true);

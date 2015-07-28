@@ -8,8 +8,8 @@ class IKJoint;
 class Joint{
 	public:
 		Joint(Body* a, Body* b) : A(a), B(b) {}
-		virtual void Initialize(int time) = 0;
-		virtual void ApplyImpulse(int time) = 0;
+		virtual void Initialize(double dt) = 0;
+		virtual void ApplyImpulse(double dt) = 0;
 		virtual void PositionalCorrection() = 0;
 	protected:
 		Body* A;
@@ -23,8 +23,8 @@ class RopeJoint : public Joint{
 			AnchorA = c - a->mass.CoM;
 			AnchorB = d - b->mass.CoM;
 		}
-		void Initialize(int time);
-		void ApplyImpulse(int time);
+		void Initialize(double dt);
+		void ApplyImpulse(double dt);
 		void PositionalCorrection();
 	private:
 		Vector2D AnchorA;
@@ -48,8 +48,8 @@ class RevJoint : public Joint{
 			limitEnabled = false;
 			cumImpulse.Set(0,0,0);
 		}
-		void Initialize(int time);
-		void ApplyImpulse(int time);
+		void Initialize(double dt);
+		void ApplyImpulse(double dt);
 		void PositionalCorrection();
 		void SetMotor(bool on, double speed, double tlimit);
 		void ApplyTorque(double torque);
@@ -94,8 +94,8 @@ class WheelJoint : public Joint{
 			springImpulse = 0;
 			cumImpulse = 0;
 		}
-		void Initialize(int time);
-		void ApplyImpulse(int time);
+		void Initialize(double dt);
+		void ApplyImpulse(double dt);
 		void PositionalCorrection();
 		void SetMotor(bool on, double speed, double tlimit);
 		void SetMotorSpeed(double speed) {motorSpeed = speed;}

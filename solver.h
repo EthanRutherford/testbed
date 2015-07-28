@@ -14,7 +14,7 @@ class Solver{
 	public:
 		Solver() : BPT(100), NPT(100), SLT(100), MVT(100) {applyg = NULL;}
 		~Solver();
-		void Solve(int time);
+		void Solve(double dt);
 		void addBody(Body* b);
 		void addJoint(Joint* j);
 		void addMagnet(Magnet* m);
@@ -29,11 +29,11 @@ class Solver{
 	private:
 		void (* applyg)(std::deque<Body*>&);
 		void applyG();
-		void applyForces(int time);
+		void applyForces(double dt);
 		void clearForces();
-		void solvePositions(int time);
+		void solvePositions(double dt);
 		void checkCol();
-		void solveVelocities(int time);
+		void solveVelocities(double dt);
 		
 		Profile BPT;
 		Profile NPT;

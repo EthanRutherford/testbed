@@ -1,6 +1,6 @@
 #include "joint.h"
 
-void RopeJoint::Initialize(int time)
+void RopeJoint::Initialize(double dt)
 {
 	Vector2D cA = A->position;
 	Vector2D cB = B->position;
@@ -39,7 +39,7 @@ void RopeJoint::Initialize(int time)
 	}
 	else impulse = 0;
 }
-void RopeJoint::ApplyImpulse(int time)
+void RopeJoint::ApplyImpulse(double dt)
 {
 	Vector2D rA = AnchorA;
 	rotateV(A->orient, rA);
@@ -58,7 +58,7 @@ void RopeJoint::ApplyImpulse(int time)
 	double C = dist - maxDist;
 	double Cdot = dot(u, vpB - vpA);
 	if (C < 0)
-		Cdot += 1/(time/1000.0) * C;
+		Cdot += 1/dt * C;
 	double cimpulse = -mass * Cdot;
 	double oldImpulse = impulse;
 	impulse = std::min(0.0, impulse + cimpulse);
@@ -98,7 +98,7 @@ void RopeJoint::PositionalCorrection()
 	B->position += P * mB;
 	B->orient += iB * cross(rB, P);
 }
-void RevJoint::Initialize(int time)
+void RevJoint::Initialize(double dt)
 {
 	Vector2D rA = A->transform * AnchorA;
 	Vector2D rB = B->transform * AnchorB;
@@ -152,7 +152,7 @@ void RevJoint::Initialize(int time)
 		motorImpulse = 0;
 	}
 }
-void RevJoint::ApplyImpulse(int time)
+void RevJoint::ApplyImpulse(double dt)
 {
 	Vector2D rA = A->transform * AnchorA;
 	Vector2D rB = B->transform * AnchorB;
@@ -169,7 +169,7 @@ void RevJoint::ApplyImpulse(int time)
 		double Cdot = wB - wA - motorSpeed;
 		double impulse = -1/(iA + iB) * Cdot;
 		double oldImpulse = motorImpulse;
-		double maxImpulse = time/1000.0 * motorMaxTorque;
+		double maxImpulse = dt * motorMaxTorque;
 		motorImpulse = Clamp(motorImpulse + impulse, -maxImpulse, maxImpulse);
 		impulse = motorImpulse - oldImpulse;
 		wA -= iA * impulse;
@@ -325,7 +325,7 @@ Vector2D RevJoint::GetAnchor()
 {
 	return A->transform * AnchorA + A->position;
 }
-void WheelJoint::Initialize(int time)
+void WheelJoint::Initialize(double dt)
 {
 	Vector2D cA = A->position;
 	Vector2D cB = B->position;
@@ -362,11 +362,10 @@ void WheelJoint::Initialize(int time)
 			double omega = 2 * pi * springFreq;
 			double dm = 2 * smass * springDamp * omega;
 			double k = smass * omega * omega;
-			double h = time/1000.0;
-			gamma = h * (dm + h * k);
+			gamma = dt * (dm + dt * k);
 			if (gamma > 0)
 				gamma = 1 / gamma;
-			bias = C * h * k * gamma;
+			bias = C * dt * k * gamma;
 			smass = invMass + gamma;
 			if (smass > 0)
 				smass = 1 / smass;
@@ -389,7 +388,7 @@ void WheelJoint::Initialize(int time)
 		motorImpulse = 0;
 	}
 }
-void WheelJoint::ApplyImpulse(int time)
+void WheelJoint::ApplyImpulse(double dt)
 {
 	Vector2D rA = AnchorA;
 	rotateV(A->orient, rA);
@@ -420,7 +419,7 @@ void WheelJoint::ApplyImpulse(int time)
 		double Cdot = wB - wA - motorSpeed;
 		double impulse = -1/(iA + iB) * Cdot;
 		double oldImpulse = motorImpulse;
-		double maxImpulse = time/1000.0 * motorMaxTorque;
+		double maxImpulse = dt * motorMaxTorque;
 		motorImpulse = Clamp(motorImpulse + impulse, -maxImpulse, maxImpulse);
 		impulse = motorImpulse - oldImpulse;
 		wA -= iA * impulse;

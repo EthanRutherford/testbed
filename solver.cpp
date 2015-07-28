@@ -5,7 +5,7 @@ Solver::~Solver()
 	Flush();
 }
 
-void Solver::Solve(int time)
+void Solver::Solve(double dt)
 {
 	for (int i = 0; i < ray.size(); i++)
 		ray[i]->setAABB();
@@ -19,12 +19,12 @@ void Solver::Solve(int time)
 	NPT.Start();
 	checkCol();
 	NPT.End();
-	applyForces(time);
+	applyForces(dt);
 	SLT.Start();
-	solveVelocities(time);
+	solveVelocities(dt);
 	SLT.End();
 	MVT.Start();
-	solvePositions(time);
+	solvePositions(dt);
 	MVT.End();
 	clearForces();
 }
@@ -154,13 +154,13 @@ void Solver::applyG()
 			body[i]->ApplyForce(Vector2D(0,-10) * body[i]->mass.m);
 }
 
-void Solver::applyForces(int time)
+void Solver::applyForces(double dt)
 {
 	for (int i = 0; i < body.size(); i++)
 	{
 		Body* b = body[i];
-		b->velocity += (b->force * b->mass.iM) * (time / 1000.0);
-		b->angVel += b->torque * b->mass.iI * (time / 1000.0);
+		b->velocity += (b->force * b->mass.iM) * dt;
+		b->angVel += b->torque * b->mass.iI * dt;
 		
 		//reset collision forces
 		b->contactForce.Set(0, 0);
@@ -177,13 +177,13 @@ void Solver::clearForces()
 	}
 }
 
-void Solver::solvePositions(int time)
+void Solver::solvePositions(double dt)
 {
 	for (int i = 0; i < body.size(); i++)
 	{
 		Body* b = body[i];
-		b->position += b->velocity * (time/1000.0);
-		b->orient += b->angVel * (time/1000.0);
+		b->position += b->velocity * dt;
+		b->orient += b->angVel * dt;
 	}
 	for (int j = 0; j < 3; j++)
 	{
@@ -251,7 +251,7 @@ void Solver::checkCol()
 	}
 }
 
-void Solver::solveVelocities(int time)
+void Solver::solveVelocities(double dt)
 {
 	int size = joint.size();
 	for (auto it = contacts.begin(); it != contacts.end(); it++)
@@ -259,12 +259,12 @@ void Solver::solveVelocities(int time)
 	for (auto it = contacts.begin(); it != contacts.end(); it++)
 		it->WarmStart();
 	for (int i = 0; i < size; i++)
-		joint[i]->Initialize(time);
+		joint[i]->Initialize(dt);
 	ms.Initialize();
 	for (int j = 0; j < 8; j++)
 	{
 		for (int i = 0; i < size; i++)
-			joint[i]->ApplyImpulse(time);
+			joint[i]->ApplyImpulse(dt);
 		ms.SolveVelocities();
 		for (auto it = contacts.begin(); it != contacts.end(); it++)
 			it->ApplyImpulse();

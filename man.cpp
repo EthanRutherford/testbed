@@ -580,7 +580,7 @@ void Controller::COMJT()
 	double ankletorque = cross(f1, fA);
 	//preprocess
 	if ((StFoot->angVel < -0.2 && ankletorque > 0) || (StFoot->angVel > 0.2 && ankletorque < 0)
-		|| abs(StFoot->angVel) > 1)
+		|| std::abs(StFoot->angVel) > 1)
 		ankletorque = 0;
 	torques[stance ? back_ankle : front_ankle] -= ankletorque;
 	torques[stance ? back_knee : front_knee] -= cross(f2, fA);

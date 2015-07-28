@@ -239,7 +239,7 @@ void World::drawBodies(bool debug)
 	glEnd();
 }
 
-void World::Solve(int time)
+void World::Solve(double dt)
 {
-	solver.Solve(time);
+	solver.Solve(dt);
 }

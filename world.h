@@ -23,7 +23,7 @@ class World{
 		void initIK(double x, double y);
 		
 		void drawBodies(bool debug);
-		void Solve(int time);
+		void Solve(double dt);
 		double GetProfile(std::string s) {return solver.GetProfile(s);}
 		
 		void setSpeed(double speed) {motor->SetMotor(true, speed, 25);}
