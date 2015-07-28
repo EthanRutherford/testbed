@@ -241,6 +241,5 @@ void World::drawBodies(bool debug)
 
 void World::Solve(int time)
 {
-	// man.Upright(Vector2D(0,-1));
 	solver.Solve(time);
 }

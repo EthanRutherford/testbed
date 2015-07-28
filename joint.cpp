@@ -291,6 +291,14 @@ void RevJoint::SetMotor(bool on, double speed, double tlimit)
 	motorSpeed = speed;
 	motorMaxTorque = tlimit;
 }
+void RevJoint::ApplyTorque(double torque)
+{
+	double iA = A->planet ? 0 : A->mass.iI;
+	double iB = B->planet ? 0 : B->mass.iI;
+	double impulse = torque/(iA + iB);
+	A->angVel -= iA * impulse;
+	B->angVel += iB * impulse;
+}
 void RevJoint::SetLimit(bool on, double upper, double lower)
 {
 	limitEnabled = on;
@@ -300,6 +308,14 @@ void RevJoint::SetLimit(bool on, double upper, double lower)
 double RevJoint::GetAngle()
 {
 	return B->orient - A->orient - refAngle;
+}
+double RevJoint::GetAffineAngle()
+{
+	double relA = GetAngle();
+	if (!limitEnabled)
+		return relA;
+	double range = upperLimit - lowerLimit;
+	return (((relA - lowerLimit) / range) * 2) - 1;
 }
 double RevJoint::GetAngVel()
 {
@@ -468,31 +484,29 @@ void WheelJoint::SetMotor(bool on, double speed, double tlimit)
 	motorMaxTorque = tlimit;
 }
 
-void IKJoint::TwoLinkIKSolve(RevJoint* Parent, RevJoint* Child, Vector2D endpoint, 
+Vector2D IKJoint::TwoLinkIKSolve(RevJoint* Parent, RevJoint* Child, Vector2D endpoint, 
 	Vector2D target, double& p, double& c)
 {
 	Vector2D origin = Parent->GetAnchor();
 	Vector2D elbow = Child->GetAnchor();
 	double r1 = mag(elbow - origin);
 	double r2 = mag(endpoint - elbow);
-	double r = mag(target - origin);
-	if (r > r1 + r2)
-		r = r1 + r2;
-	double a = (r1 * r1 - r2 * r2 + r * r) / (2 * r);
-	double tmp = r1*r1 - a*a;
-	if (tmp < 0)
-		tmp = 0;
-	double h = sqrt(tmp);
-	Vector2D d1 = target - origin;
-	normalize(d1);
-	Vector2D d2(d1.y, -d1.x);
-	
-	Vector2D solvedPoint = origin + d1 * a + d2 * (-h);
-	Vector2D P2E = solvedPoint - origin;
-	Vector2D E2T = target - solvedPoint;
-	
-	p = atan2(P2E.y, P2E.x) + pi/2 - Parent->A->orient - Parent->refAngle;
-	c = atan2(E2T.y, E2T.x) + pi/2 - (atan2(P2E.y, P2E.x) + pi/2) - Child->refAngle;
+	target = target - origin;
+	double tdsqr = target.x * target.x + target.y * target.y;
+	double cos2d = 2*r1*r2;
+	double cos2 = (tdsqr - r1*r1 - r2*r2) / (cos2d);
+	cos2 = Clamp(cos2, -1, 1);
+	c = -acos(cos2);
+	double sin2 = sin(c);
+	double ta = r1 + r2*cos2;
+	double to = r2*sin2;
+	double tany = target.y*ta - target.x*to;
+	double tanx = target.x*ta + target.y*to;
+	p = atan2(tany, tanx) + pi/2 - Parent->A->orient - Parent->refAngle;
+	Vector2D solvedPoint(r1, 0);
+	rotateV(atan2(tany, tanx), solvedPoint);
+	solvedPoint += origin;
+	return solvedPoint;
 }
 
 IKJoint::IKJoint(RevJoint* j, Vector2D endPoint)

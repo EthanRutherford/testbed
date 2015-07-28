@@ -52,8 +52,10 @@ class RevJoint : public Joint{
 		void ApplyImpulse(int time);
 		void PositionalCorrection();
 		void SetMotor(bool on, double speed, double tlimit);
+		void ApplyTorque(double torque);
 		void SetLimit(bool on, double upper, double lower);
 		double GetAngle();
+		double GetAffineAngle();
 		double GetAngVel();
 		Vector2D GetAnchor();
 	private:
@@ -116,7 +118,7 @@ class WheelJoint : public Joint{
 
 class IKJoint{
 	public:
-		static void TwoLinkIKSolve(RevJoint* Parent, RevJoint* Child, Vector2D endpoint, 
+		static Vector2D TwoLinkIKSolve(RevJoint* Parent, RevJoint* Child, Vector2D endpoint, 
 			Vector2D target, double& p, double& c);
 		IKJoint(RevJoint* j, Vector2D endPoint);
 		void AddJoint(RevJoint* j);
