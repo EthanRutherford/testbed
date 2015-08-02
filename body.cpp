@@ -133,7 +133,7 @@ void mCircle::setAABB()
 	aabb.max = Vector2D(radius + .05, radius + .05) + body->position;
 	aabb.min = Vector2D(-radius - .05, -radius -.05) + body->position;
 }
-bool mCircle::raycast(double& ans, mRay ray)
+bool mCircle::raycast(double& ans, Vector2D& norm, mRay ray)
 {
 	Vector2D s = ray.origin - body->position;
 	double b = dot(s, s) - radius * radius;
@@ -147,6 +147,8 @@ bool mCircle::raycast(double& ans, mRay ray)
 	if (a >= 0 and a <= rr)
 	{
 		ans = a / rr;
+		norm = s + r * a;
+		normalize(norm);
 		return true;
 	}
 	return false;
@@ -217,7 +219,7 @@ void mPolygon::setAABB()
 	aabb.min.x -= .05;
 	aabb.min.y -= .05;
 }
-bool mPolygon::raycast(double& ans, mRay ray)
+bool mPolygon::raycast(double& ans, Vector2D& norm, mRay ray)
 {
 	Vector2D p1 = body->transform.transpose() * (ray.origin - body->position);
 	Vector2D p2 = body->transform.transpose() * 
@@ -225,11 +227,11 @@ bool mPolygon::raycast(double& ans, mRay ray)
 	Vector2D d = p2 - p1;
 	
 	double low = 0, hi = ray.length;
-	bool found = false;
+	int index = -1;
 	for (int i = 0; i < vertexCount; i++)
 	{
-		double num = dot(norm[i], pt[i] -p1);
-		double den = dot(norm[i], d);
+		double num = dot(this->norm[i], pt[i] -p1);
+		double den = dot(this->norm[i], d);
 		if (den == 0)
 		{
 			if (num < 0)
@@ -240,7 +242,7 @@ bool mPolygon::raycast(double& ans, mRay ray)
 			if (den < 0 and num < low * den)
 			{
 				low = num / den;
-				found = true;
+				index = i;
 			}
 			else if (den > 0 and num < hi * den)
 				hi = num / den;
@@ -248,9 +250,10 @@ bool mPolygon::raycast(double& ans, mRay ray)
 	}
 	if (hi < low)
 		return false;
-	if (found)
+	if (index >= 0)
 	{
 		ans = low;
+		norm = body->transform * this->norm[index];
 		return true;
 	}
 	return false;
@@ -363,10 +366,16 @@ void mRay::prepareForBP()
 bool mRay::cast()
 {
 	result = 2;
-	double tmp;
+	double tmpf;
+	Vector2D tmpn;
 	for (int i = 0; i < shapes.size(); i++)
-		if (shapes[i]->raycast(tmp, *this) and tmp < result)
-			result = tmp;
+	{
+		if (shapes[i]->raycast(tmpf, tmpn, *this) and tmpf < result)
+		{
+			result = tmpf;
+			norm = tmpn;
+		}
+	}
 	if (result <= 1)
 		return true;
 	return false;

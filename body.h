@@ -64,7 +64,7 @@ struct mShape{
 	void DrawAABB();
 	virtual Type GetType() const = 0;
 	virtual void setAABB() = 0;
-	virtual bool raycast(double& ans, mRay ray) = 0;
+	virtual bool raycast(double& ans, Vector2D& norm, mRay ray) = 0;
 	AABB* getAABB(){return &aabb;}
 	
 	Body* body;
@@ -79,7 +79,7 @@ struct mCircle : public mShape{
 	void Draw();
 	Type GetType() const {return _circle;}
 	void setAABB();
-	bool raycast(double&ans, mRay ray);
+	bool raycast(double&ans, Vector2D& norm, mRay ray);
 };
 struct mPolygon : public mShape{
 	mShape* Clone() const;
@@ -87,7 +87,7 @@ struct mPolygon : public mShape{
 	void Draw();
 	Type GetType() const {return _poly;}
 	void setAABB();
-	bool raycast(double&ans, mRay ray);
+	bool raycast(double&ans, Vector2D& norm, mRay ray);
 	void SetBox(double hw, double hh);
 	void Set(Vector2D* vertices, int count);
 	Vector2D GetSupport(const Vector2D& dir);
@@ -101,7 +101,7 @@ struct mRay : public mShape{
 	void Draw() {}
 	Type GetType() const {return _ray;}
 	void setAABB();
-	bool raycast(double&ans, mRay ray) {return false;}
+	bool raycast(double&ans, Vector2D& norm, mRay ray) {return false;}
 	mRay() {filtergroup = 0;}
 	mRay(Vector2D o, Vector2D d, double l) 
 		: origin(o), direction(d), length(l) {filtergroup = 0;}
@@ -111,6 +111,7 @@ struct mRay : public mShape{
 	Vector2D direction;
 	double length;
 	double result;
+	Vector2D norm;
 	int filtergroup;
 	std::vector<mShape*> shapes;
 };
