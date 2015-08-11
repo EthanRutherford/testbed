@@ -25,6 +25,7 @@ Body::Body(mShape** s, int num, double x, double y, double density, bool p)
 	SetMass(density);
 	nodraw = false;
 	contact = false;
+	transform.Set(orient);
 	for (int i = 0; i < shape.size(); i++)
 		shape[i]->setAABB();
 }
@@ -73,11 +74,6 @@ void Body::SetStatic()
 	mass.iI = 0.0f;
 	mass.m = 0.0f;
 	mass.iM = 0.0f;
-}
-void Body::Orient(double radians)
-{
-	orient = radians;
-	transform.Set(radians);
 }
 bool AABBtest(AABB* a, AABB* b)
 {

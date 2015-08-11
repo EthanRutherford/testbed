@@ -33,8 +33,8 @@ struct Body{
 	Vector2D velocity;
 	double angVel;
 	double torque;
-	double orient;
-	Matrix2D transform;
+	Angle orient;
+	RotMat2 transform;
 	Vector2D force;
 	massData mass;
 	double Friction;

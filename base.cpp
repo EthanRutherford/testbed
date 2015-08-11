@@ -172,9 +172,7 @@ void rotateV(double angle, Vector2D& V)
 
 double angleV(Vector2D V)
 {
-	double ans = atan2(V.y, V.x);
-	if (ans < 0)
-		ans += 2*pi;
+	Angle ans = atan2(V.y, V.x);
 	return ans;
 }
 
@@ -182,9 +180,7 @@ double angle(Vector2D a, Vector2D b)
 {
 	double x = b.x - a.x;
 	double y = b.y - a.y;
-	double ans = atan2(y, x);
-	if (ans < 0)
-		ans += 2*pi;
+	Angle ans = atan2(y, x);
 	return ans;
 }
 
@@ -245,5 +241,6 @@ double Clamp(double num, double bottom, double top)
 
 void normalize(Vector2D& V)
 {
-	V *= (1/mag(V));
+	if (std::abs(V.x) + std::abs(V.y) > 0)
+		V *= (1/mag(V));
 }

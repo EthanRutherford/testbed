@@ -74,6 +74,32 @@ struct Matrix2D{
 	}
 };
 
+struct RotMat2 : public Matrix2D{
+	void Set(double& radians){
+		rad = &radians;
+		oldrad = radians+1;
+		update();
+	}
+	Vector2D operator*(Vector2D V){
+		update();
+		return ((Matrix2D)*this)*(V);
+	}
+	Matrix2D transpose() {
+		update();
+		return Matrix2D::transpose();
+	}
+	private:
+	void update() {
+		if (oldrad != *rad)
+		{
+			Matrix2D::Set(*rad);
+			oldrad = *rad;
+		}
+	}
+	double* rad;
+	double oldrad;
+};
+
 struct Matrix3D{
 	double m[3][3];
 	Matrix3D() {}
@@ -87,6 +113,21 @@ struct Matrix3D{
 			det * (m[0][0] * C.y - m[1][0] * C.x));
 	}
 	Vector3D solve3(Vector3D b);
+};
+
+class Angle{
+	public:
+		Angle() {}
+		Angle(double d) : a(d) {clean();}
+		operator double&() {return a;}
+		double& operator=(double d) {a = d; clean();}
+		void operator+=(double d) {a += d; clean();}
+		void operator-=(double d) {a -= d; clean();}
+		void operator*=(double d) {a *= d; clean();}
+		void operator/=(double d) {a /= d; clean();}
+	private:
+		void clean() {int s=a<0?-1:1; a -= 2*pi*(trunc((a+s*pi)/(2*pi)));}
+		double a;
 };
 
 class trajectory1D{

@@ -69,9 +69,9 @@ class RevJoint : public Joint{
 		double motorImpulse;
 		
 		bool limitEnabled;
-		double lowerLimit;
-		double upperLimit;
-		double refAngle;
+		Angle lowerLimit;
+		Angle upperLimit;
+		Angle refAngle;
 		Vector3D cumImpulse;
 		
 		enum State{

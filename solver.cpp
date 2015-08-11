@@ -195,7 +195,6 @@ void Solver::solvePositions(double dt)
 	}
 	for (int i = 0; i < body.size(); i++)
 	{
-		body[i]->Orient(body[i]->orient);
 		for (int j = 0; j < body[i]->shape.size(); j++)
 			body[i]->shape[j]->setAABB();
 	}

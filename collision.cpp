@@ -246,8 +246,6 @@ void Manifold::PositionalCorrection()
 	double iA = A->body->planet ? 0 : A->body->mass.iI;
 	double mB = B->body->planet ? 0 : B->body->mass.iM;
 	double iB = B->body->planet ? 0 : B->body->mass.iI;
-	A->body->Orient(A->body->orient);
-	B->body->Orient(B->body->orient);
 	Vector2D cA = A->body->position;
 	double aA = A->body->orient;
 	Vector2D cB = B->body->position;

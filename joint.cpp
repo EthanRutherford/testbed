@@ -77,8 +77,6 @@ void RopeJoint::PositionalCorrection()
 {
 	Vector2D cA = A->position;
 	Vector2D cB = B->position;
-	A->Orient(A->orient);
-	B->Orient(B->orient);
 	double aA = A->orient;
 	double aB = B->orient;
 	Vector2D rA = A->transform * AnchorA;
@@ -239,8 +237,6 @@ void RevJoint::ApplyImpulse(double dt)
 }
 void RevJoint::PositionalCorrection()
 {
-	A->Orient(A->orient);
-	B->Orient(B->orient);
 	Vector2D rA = A->transform * AnchorA;
 	Vector2D rB = B->transform * AnchorB;
 	Vector2D cA = A->position;
@@ -444,8 +440,6 @@ void WheelJoint::ApplyImpulse(double dt)
 }
 void WheelJoint::PositionalCorrection()
 {
-	A->Orient(A->orient);
-	B->Orient(B->orient);
 	Vector2D rA = A->transform * AnchorA;
 	Vector2D rB = B->transform * AnchorB;
 	Vector2D cA = A->position;
