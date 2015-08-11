@@ -28,7 +28,6 @@ struct Body{
 	void ApplyTorque(double t) {torque += t;}
 	void ApplyImpulse(Vector2D impulse, Vector2D contactVector);
 	void SetStatic();
-	void Orient(double radians);
 	Vector2D position;
 	Vector2D velocity;
 	double angVel;
