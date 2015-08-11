@@ -287,11 +287,11 @@ void RevJoint::SetMotor(bool on, double speed, double tlimit)
 	motorSpeed = speed;
 	motorMaxTorque = tlimit;
 }
-void RevJoint::ApplyTorque(double torque)
+void RevJoint::ApplyTorque(double torque, double dt)
 {
 	double iA = A->planet ? 0 : A->mass.iI;
 	double iB = B->planet ? 0 : B->mass.iI;
-	double impulse = torque/(iA + iB);
+	double impulse = torque * dt;
 	A->angVel -= iA * impulse;
 	B->angVel += iB * impulse;
 }

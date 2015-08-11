@@ -1,5 +1,4 @@
 #include "man.h"
-#include <fstream>
 
 //Man
 
@@ -122,7 +121,7 @@ Vector2D Man::GetPos()
 void Man::updateCoM()
 {
 	Vector2D CoMPos(0, 0), CoMVel(0, 0);
-	double totalmass;
+	double totalmass = 0;
 	for (Body* b : body)
 	{
 		totalmass += b->mass.m;
@@ -137,10 +136,14 @@ void Man::updateCoM()
 
 Controller::Controller(Man* m) : man(m)
 {
-	ray.origin = m->body[torso]->position;
-	ray.direction.Set(0, -1);
-	ray.length = 5;
-	ray.filtergroup = m->body[torso]->filtergroup;
+	SwRay.origin = Vector2D(0,.5);
+	SwRay.direction.Set(0, -1);
+	SwRay.length = 1;
+	SwRay.filtergroup = m->body[torso]->filtergroup;
+	StRay.origin = Vector2D(0,.5);
+	StRay.direction.Set(0, -1);
+	StRay.length = 1;
+	StRay.filtergroup = m->body[torso]->filtergroup;
 	
 	stance = true;
 	doubleStance = false;
@@ -156,8 +159,6 @@ Controller::Controller(Man* m) : man(m)
 	heightTraj.addKnot(.5, .26);
 	heightTraj.addKnot(1, .16);
 	
-	//walking controller
-	states.emplace_back(0, .6, true, false, false, true);
 	for (int i = 0; i < man->joint.size(); i++)
 	{
 		desiredPose.joints.emplace_back();
@@ -180,85 +181,136 @@ Controller::Controller(Man* m) : man(m)
 	rootControlParams.maxAbsTorque = 8;
 	rootControlParams.strength = 1;
 	
+	loadFSM("simsim/walk.txt");
+	
+	//walking controller
+	//states.emplace_back(0, .6, true, false, false, true);
+	
 	//states[0].traj.emplace_back(back_hip, front_hip); //stance hip
 	
-	states[0].traj.emplace_back(front_hip, back_hip); //swing hip
-	states[0].traj[0].strength.addKnot(.2, .2);
-	states[0].traj[0].strength.addKnot(.4, 1);
+	// states[0].traj.emplace_back(front_hip, back_hip); //swing hip
+	// states[0].traj[0].strength.addKnot(.2, .2);
+	// states[0].traj[0].strength.addKnot(.4, 1);
 	
-	states[0].traj.emplace_back(back_knee, front_knee); //stance knee
-	states[0].traj[1].comp.emplace_back();
-	states[0].traj[1].comp[0].base.addKnot(0.03344, -0.204846);
-	states[0].traj[1].comp[0].base.addKnot(0.959866, -0.070153);
+	// states[0].traj.emplace_back(back_knee, front_knee); //stance knee
+	// states[0].traj[1].comp.emplace_back();
+	// states[0].traj[1].comp[0].base.addKnot(0.03344, -0.204846);
+	// states[0].traj[1].comp[0].base.addKnot(0.959866, -0.070153);
 	
-	states[0].traj.emplace_back(front_knee, back_knee); //swing knee
-	states[0].traj[2].strength.addKnot(.2, .2);
-	states[0].traj[2].strength.addKnot(.4, 1);
-	states[0].traj[2].comp.emplace_back();
-	states[0].traj[2].comp[0].base.addKnot(0, 0);
+	// states[0].traj.emplace_back(front_knee, back_knee); //swing knee
+	// states[0].traj[2].strength.addKnot(.2, .2);
+	// states[0].traj[2].strength.addKnot(.4, 1);
+	// states[0].traj[2].comp.emplace_back();
+	// states[0].traj[2].comp[0].base.addKnot(0, 0);
 	
-	states[0].traj.emplace_back(back_ankle, front_ankle); //stance ankle
-	states[0].traj[3].strength.addKnot(.3, 1);
-	states[0].traj[3].comp.emplace_back();
-	states[0].traj[3].comp[0].base.addKnot(0, .1);
-	states[0].traj[3].comp[0].base.addKnot(.3, 0);
-	states[0].traj[3].comp[0].base.addKnot(.8, 0);
-	states[0].traj[3].comp[0].base.addKnot(1, -.2);
-	states[0].traj[3].comp[0].vscale.addKnot(-.1, .5);
-	states[0].traj[3].comp[0].vscale.addKnot(0, 0);
-	states[0].traj[3].comp[0].vscale.addKnot(.2, .2);
-	states[0].traj[3].comp[0].vscale.addKnot(.5, .2);
-	states[0].traj[3].comp[0].vscale.addKnot(1, 2.5);
+	// states[0].traj.emplace_back(back_ankle, front_ankle); //stance ankle
+	// states[0].traj[3].strength.addKnot(.3, 1);
+	// states[0].traj[3].comp.emplace_back();
+	// states[0].traj[3].comp[0].base.addKnot(0, .1);
+	// states[0].traj[3].comp[0].base.addKnot(.3, 0);
+	// states[0].traj[3].comp[0].base.addKnot(.8, 0);
+	// states[0].traj[3].comp[0].base.addKnot(1, -.2);
+	// states[0].traj[3].comp[0].vscale.addKnot(-.1, .5);
+	// states[0].traj[3].comp[0].vscale.addKnot(0, 0);
+	// states[0].traj[3].comp[0].vscale.addKnot(.2, .2);
+	// states[0].traj[3].comp[0].vscale.addKnot(.5, .2);
+	// states[0].traj[3].comp[0].vscale.addKnot(1, 2.5);
 	
-	states[0].traj.emplace_back(front_ankle, back_ankle); //swing ankle
-	states[0].traj[4].strength.addKnot(.2, .2);
-	states[0].traj[4].strength.addKnot(.4, 1);
-	states[0].traj[4].comp.emplace_back();
-	states[0].traj[4].comp[0].base.addKnot(0, -.3);
-	states[0].traj[4].comp[0].base.addKnot(.3, -.3);
-	states[0].traj[4].comp[0].base.addKnot(.4, 0);
-	states[0].traj[4].comp[0].base.addKnot(1, .1);
-	states[0].traj[4].comp[0].vscale.addKnot(-.5, 2);
-	states[0].traj[4].comp[0].vscale.addKnot(-.1, 1);
-	states[0].traj[4].comp[0].vscale.addKnot(0, 0);
-	states[0].traj[4].comp[0].vscale.addKnot(.1, 1);
-	states[0].traj[4].comp[0].vscale.addKnot(.5, 2.5);
-	states[0].traj[4].comp[0].vscale.addKnot(1, 6);
-	states[0].traj[4].comp[0].vscale.addKnot(1.1, 7);
-	states[0].traj[4].comp[0].vscale.addKnot(1.5, 3);
+	// states[0].traj.emplace_back(front_ankle, back_ankle); //swing ankle
+	// states[0].traj[4].strength.addKnot(.2, .2);
+	// states[0].traj[4].strength.addKnot(.4, 1);
+	// states[0].traj[4].comp.emplace_back();
+	// states[0].traj[4].comp[0].base.addKnot(0, -.3);
+	// states[0].traj[4].comp[0].base.addKnot(.3, -.3);
+	// states[0].traj[4].comp[0].base.addKnot(.4, 0);
+	// states[0].traj[4].comp[0].base.addKnot(1, .1);
+	// states[0].traj[4].comp[0].vscale.addKnot(-.5, 2);
+	// states[0].traj[4].comp[0].vscale.addKnot(-.1, 1);
+	// states[0].traj[4].comp[0].vscale.addKnot(0, 0);
+	// states[0].traj[4].comp[0].vscale.addKnot(.1, 1);
+	// states[0].traj[4].comp[0].vscale.addKnot(.5, 2.5);
+	// states[0].traj[4].comp[0].vscale.addKnot(1, 6);
+	// states[0].traj[4].comp[0].vscale.addKnot(1.1, 7);
+	// states[0].traj[4].comp[0].vscale.addKnot(1.5, 3);
 	
-	states[0].traj.emplace_back(back_shoulder, front_shoulder); //stance shoulder
-	states[0].traj[5].comp.emplace_back();
-	states[0].traj[5].comp[0].base.addKnot(0, .2);
+	// states[0].traj.emplace_back(back_shoulder, front_shoulder); //stance shoulder
+	// states[0].traj[5].comp.emplace_back();
+	// states[0].traj[5].comp[0].base.addKnot(0, .2);
 	
-	states[0].traj.emplace_back(front_shoulder, back_shoulder); //swing shoulder
-	states[0].traj[6].comp.emplace_back();
-	states[0].traj[6].comp[0].base.addKnot(0, -.1);
+	// states[0].traj.emplace_back(front_shoulder, back_shoulder); //swing shoulder
+	// states[0].traj[6].comp.emplace_back();
+	// states[0].traj[6].comp[0].base.addKnot(0, -.1);
 	
-	states[0].traj.emplace_back(back_elbow, front_elbow); //stance elbow
-	states[0].traj[7].comp.emplace_back();
-	states[0].traj[7].comp[0].base.addKnot(0, .1);
+	// states[0].traj.emplace_back(back_elbow, front_elbow); //stance elbow
+	// states[0].traj[7].comp.emplace_back();
+	// states[0].traj[7].comp[0].base.addKnot(0, .1);
 	
-	states[0].traj.emplace_back(front_elbow, back_elbow); //swing elbow
-	states[0].traj[8].comp.emplace_back();
-	states[0].traj[8].comp[0].base.addKnot(0, 0);
+	// states[0].traj.emplace_back(front_elbow, back_elbow); //swing elbow
+	// states[0].traj[8].comp.emplace_back();
+	// states[0].traj[8].comp[0].base.addKnot(0, 0);
 	
-	states[0].traj.emplace_back(neck, neck); //neck
+	// states[0].traj.emplace_back(neck, neck); //neck
 	
-	states[0].traj.emplace_back(-1, -1); //root
-	states[0].traj[10].comp.emplace_back();
-	states[0].traj[10].comp[0].base.addKnot(0, 0);
+	// states[0].traj.emplace_back(-1, -1); //root
+	// states[0].traj[10].comp.emplace_back();
+	// states[0].traj[10].comp[0].base.addKnot(0, 0);
 }
 
-void Controller::Step()
+void Controller::loadFSM(std::string filename)
 {
+	std::ifstream file(filename.c_str());
+	std::string word;
+	if (!file.fail())
+	{
+		int a;
+		double b;
+		bool c, d, e, f;
+		file >> a >> b >> c >> d >> e >> f;
+		states.emplace_back(a, b, c, d, e, f);
+	}
+	while (file >> word)
+	{
+		if (word == "trajectory")
+		{
+			int a, b;
+			file >> a >> b;
+			states.back().traj.emplace_back(a, b);
+		}
+		if (word == "strength")
+		{
+			double a, b;
+			file >> a >> b;
+			states.back().traj.back().strength.addKnot(a, b);
+		}
+		if (word == "component")
+			states.back().traj.back().comp.emplace_back();
+		if (word == "base")
+		{
+			double a, b;
+			file >> a >> b;
+			states.back().traj.back().comp.back().base.addKnot(a, b);
+		}
+		if (word == "vscale")
+		{
+			double a, b;
+			file >> a >> b;
+			states.back().traj.back().comp.back().vscale.addKnot(a, b);
+		}
+	}
+}
+
+void Controller::Step(double dt)
+{
+	//we should really do something if these fail
+	if (SwRay.cast());
+	if (StRay.cast());
 	setStanceSwing();
 	updateCoM();
 	computeDesired();
 	//set upper body pose?
 	//adjustHeight();
 	computeTorques();
-	applyTorques();
+	applyTorques(dt);
 }
 
 void Controller::checkTransition(double dt)
@@ -274,7 +326,8 @@ void Controller::checkTransition(double dt)
 		swingTraj.addKnot(1, 0);
 	}
 	
-	ray.origin.Set(SwFoot->position.x + SwFoot->velocity.x * .11, man->body[torso]->position.y);
+	SwRay.origin.Set(SwFoot->position.x + .5 - std::abs(phi-.5), SwFoot->position.y);
+	StRay.origin = StFoot->position;
 }
 
 int Controller::advanceTime(double dt)	//needs to check and see if it's fallen
@@ -338,7 +391,8 @@ void Controller::computeTorques()		//might need tweaks
 		
 		computeD0(phiToUse, &d0);
 		computeV0(phiToUse, &v0);
-		double neworient = curState->traj[i].evaluate(phiToUse, StancetoCoM-d0, man->comPosition-v0);
+		double neworient = curState->traj[i].evaluate(phiToUse, StancetoCoM-d0, 
+			man->comPosition-v0);
 		
 		if (jIndex == -1)
 		{
@@ -357,11 +411,7 @@ void Controller::computeTorques()		//might need tweaks
 	
 	computePDTorques();
 	
-	//bubble up torques
-	// torques[8] += torques[10];
-	// torques[7] += torques[9];
-	// torques[6] += torques[8];
-	// torques[5] += torques[7];
+	//bubble up torques(?)
 	
 	compensateGravity();
 	
@@ -375,7 +425,7 @@ void Controller::computeTorques()		//might need tweaks
 	computeHipTorques();
 }
 
-void Controller::applyTorques()
+void Controller::applyTorques(double dt)
 {
 	bool noOldTorqueInfo = false;
 	if (oldtorques.size() != torques.size())
@@ -397,7 +447,7 @@ void Controller::applyTorques()
 		tmpTorque = oldtorques[i] + deltaT;
 		
 		//((RevJoint*)man->joint[i])->SetMotor(true, 100, tmpTorque);
-		((RevJoint*)man->joint[i])->ApplyTorque(tmpTorque);
+		((RevJoint*)man->joint[i])->ApplyTorque(tmpTorque, dt);
 		oldtorques[i] = tmpTorque;
 	}
 }
@@ -439,8 +489,7 @@ Vector2D Controller::getSwingTarget(double t, Vector2D com)
 	step.x += com.x;
 	
 	double height = 0;
-	if (ray.cast())
-		height = (ray.origin + ray.direction * ray.result * ray.length).y;
+	height = (SwRay.origin + SwRay.direction * SwRay.result * SwRay.length).y;
 	double panic = -4 * phi * phi + 4 * phi;
 	panic *= .05;
 	
@@ -461,15 +510,17 @@ void Controller::computePDTorques()
 			double desAngle = desiredPose.joints[i].orient;
 			double desAngVel = desiredPose.joints[i].angvel;
 			
-			if (i == back_ankle)
+			if (man->joint[i] == SwAnkle)
 			{
-				curAngle = man->body[back_foot]->orient;
-				curAngVel = man->body[back_foot]->angVel;
+				curAngle = SwFoot->orient;
+				curAngVel = SwFoot->angVel;
+				desAngle += (angleV(SwRay.norm) - pi/2);
 			}
-			if (i == front_ankle)
+			if (man->joint[i] == StAnkle)
 			{
-				curAngle = man->body[front_foot]->orient;
-				curAngVel = man->body[front_foot]->angVel;
+				curAngle = StFoot->orient;
+				curAngVel = StFoot->angVel;
+				desAngle += (angleV(StRay.norm) - pi/2);
 			}
 			double torque = (desAngle - curAngle) * controlParams[i].kp;
 			torque += (desAngVel - curAngVel) * controlParams[i].kd;
@@ -548,14 +599,14 @@ void Controller::compensateGravity()
 	torques[back_shoulder] += tmpT;
 }
 
-void Controller::COMJT()
+void Controller::COMJT()			//has trouble keeping toes on ground
 {
 	double m = man->body[torso]->mass.m + StThigh->mass.m + StCalf->mass.m;
 	Vector2D anklePos = ((RevJoint*)StAnkle)->GetAnchor();
 	Vector2D kneePos = ((RevJoint*)StKnee)->GetAnchor();
 	Vector2D hipPos = ((RevJoint*)StHip)->GetAnchor();
 	
-	Vector2D desVel((desiredvelocity - man->body[torso]->velocity.x)*10, 0);
+	Vector2D desVel((desiredvelocity - man->comVelocity.x)*10, 0);
 	double mass = 0;
 	for (int i = 0; i < man->body.size(); i++)
 		mass += man->body[i]->mass.m;
@@ -582,6 +633,7 @@ void Controller::COMJT()
 	if ((StFoot->angVel < -0.2 && ankletorque > 0) || (StFoot->angVel > 0.2 && ankletorque < 0)
 		|| std::abs(StFoot->angVel) > 1)
 		ankletorque = 0;
+	ankletorque = Clamp(ankletorque, -.4, .4);					//questionable
 	torques[stance ? back_ankle : front_ankle] -= ankletorque;
 	torques[stance ? back_knee : front_knee] -= cross(f2, fA);
 	torques[stance ? back_hip : front_hip] -= cross(f3, fA);

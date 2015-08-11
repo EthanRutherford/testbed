@@ -4,6 +4,7 @@
 #include "body.h"
 #include "joint.h"
 #include <vector>
+#include <fstream>
 
 enum Bodies{
 	back_forearm, back_arm, back_foot, back_calf, back_thigh, torso,
@@ -116,11 +117,12 @@ struct Pose{
 class Controller{
 	public:
 		Controller(Man* m);
-		void Step();
+		void loadFSM(std::string filename);
+		void Step(double dt);
 		void checkTransition(double dt);
 		int advanceTime(double dt);
 		void computeTorques();
-		void applyTorques();
+		void applyTorques(double dt);
 		void computeIKSwingTargets(double dt);
 		Vector2D getSwingTarget(double t, Vector2D com);
 		void computePDTorques();
@@ -134,14 +136,13 @@ class Controller{
 		void computeDesired();
 		void updateCoM();
 		
-		mRay* getRay() {return &ray;}
+		mRay SwRay, StRay;
 		
 		Vector2D endpoint, elbow;
 		void SetSpeed(double speed) {desiredvelocity = speed;}
 		
 	private:
 		Man* man;
-		mRay ray;
 		std::vector<double> torques;
 		std::vector<double> oldtorques;
 		std::vector<State> states;

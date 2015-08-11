@@ -52,7 +52,7 @@ class RevJoint : public Joint{
 		void ApplyImpulse(double dt);
 		void PositionalCorrection();
 		void SetMotor(bool on, double speed, double tlimit);
-		void ApplyTorque(double torque);
+		void ApplyTorque(double torque, double dt);
 		void SetLimit(bool on, double upper, double lower);
 		double GetAngle();
 		double GetAffineAngle();
