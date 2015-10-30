@@ -155,6 +155,35 @@ void World::addBridge(double x, double y)
 	f++;
 }
 
+void World::addDynBridge(Vector2D a, Vector2D b)
+{
+	if (a.x > b.x)
+		std::swap(a,b);
+	Body* b1 = addBox(a.x, a.y, 2, .5, true);
+	Body* b2 = addBox(b.x, b.y, 2, .5, true);
+	b1->filtergroup = f;
+	b2->filtergroup = f;
+	double x = a.x;
+	a.x += 1;
+	b.x -= 1;
+	Body* bp = b1;
+	double dist = mag(a - b);
+	double l = dist / int(dist/2);
+	double lp = 2;
+	for (int i = 1; i < dist/2; i++)
+	{
+		Body* bc = addBox(x+(i*l), a.y + (i*(b.y-a.y)/(dist/2)), l, .5, false);
+		RevJoint* j = new RevJoint(bp, bc, Vector2D(lp/2, 0), Vector2D(-l/2, 0));
+		solver.addJoint(j);
+		bp = bc;
+		bc->filtergroup = f;
+		lp = l;
+	}
+	RevJoint* j = new RevJoint(bp, b2, Vector2D(l/2, 0), Vector2D(-1, 0));
+	solver.addJoint(j);
+	f++;
+}
+
 void World::addComposite(double x, double y)
 {
 	mPolygon poly1;

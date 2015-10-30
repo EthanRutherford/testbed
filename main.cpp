@@ -132,9 +132,9 @@ void Display()
 	outputString("mv:", 10, _screenh-100, true);
 	outputNum(((int)(MV*1000000000))/1000000.0, 50, _screenh-100, true);
 	
-	glFlush();
 	glutSwapBuffers();
 	glutPostRedisplay();
+	glFlush();
 }
 void SpecialInput(int key, int x, int y)
 {
@@ -153,6 +153,7 @@ void KeyUp(unsigned char key, int x, int y)
 	buffer[key] = false;
 }
 bool set = false;
+Vector2D start(0,0);
 void Mouse(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON and state == GLUT_DOWN)
@@ -163,12 +164,20 @@ void Mouse(int button, int state, int x, int y)
 			world->addLinked(X, Y);
 		else if (buffer['j'])
 			world->addRope(X, Y);
+		else if (buffer['m'])
+			world->addMagnet(X, Y);
+		else if (buffer['e'])
+		{
+			set = true;
+			start.Set(X, Y);
+		}
+		else if (set)
+		{
+			set = false;
+			world->addDynBridge(start, Vector2D(X, Y));
+		}
 		else
-			//set = !set;
-			//world->addCircle(X, Y);
-			//world->addMagnet(X, Y);
 			world->addBox(X, Y, 1, 1, false);
-			//world->addComposite(X, Y);
 	}
 	if (button == GLUT_RIGHT_BUTTON and state == GLUT_DOWN)
 	{
@@ -178,6 +187,8 @@ void Mouse(int button, int state, int x, int y)
 			world->addStack(X, Y);
 		else if (buffer['j'])
 			world->addBridge(X, Y);
+		else if (buffer['m'])
+			world->addCircle(X, Y);
 		else
 			world->addRamp(X, Y);
 	}
@@ -186,8 +197,8 @@ void Mouse2(int x, int y)
 {
 	double X = world->getPos().x + (x - (_screenw/2.0))/scale;
 	double Y = world->getPos().y + ((_screenh/2.0) - y)/scale;
-	if (set)
-		world->setTarget(X, Y);
+	// if (set)
+		// world->setTarget(X, Y);
 }
 int main(int argc, char** argv)
 {

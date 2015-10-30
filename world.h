@@ -17,6 +17,7 @@ class World{
 		void addStack(double x, double y);
 		void addRope(double x, double y);
 		void addBridge(double x, double y);
+		void addDynBridge(Vector2D a, Vector2D b);
 		void addComposite(double x, double y);
 		void addMagnet(double x, double y);
 		void setTarget(double x, double y);
