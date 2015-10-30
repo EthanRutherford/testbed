@@ -310,8 +310,8 @@ CollisionCallback Dispatch[mShape::_count][mShape::_count] =
 
 void CircletoCircle(Manifold* m, mShape* a, mShape* b)
 {
-	mCircle *A = reinterpret_cast<mCircle*>(a);
-	mCircle *B = reinterpret_cast<mCircle*>(b);
+	mCircle* A = reinterpret_cast<mCircle*>(a);
+	mCircle* B = reinterpret_cast<mCircle*>(b);
 	m->normal = b->body->position - a->body->position;
 	double dist = m->normal.LSqr();
 	double radius = A->radius + B->radius;

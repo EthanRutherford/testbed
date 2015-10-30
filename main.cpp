@@ -62,7 +62,7 @@ void Idle()
 	double diff = curtime - lasttime;
 	lasttime = curtime;
 	
-	fps = (1/diff * .1) + (fps * .9);
+	fps = (diff != 0) ? (1/diff * .5) + (fps * .5) : 0;
 	
 	if (buffer['r'])
 	{
@@ -211,3 +211,4 @@ int main(int argc, char** argv)
 	glutMainLoop();
 	delete world;
 }
+

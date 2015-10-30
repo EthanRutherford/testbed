@@ -22,7 +22,8 @@ class Magnet{
 
 class MagnetPairing{
 	public:
-		MagnetPairing(Magnet* a, Magnet* b) : A(a), B(b) {lastLambda = 5000; lastPC = 2;}
+		MagnetPairing(Magnet* a, Magnet* b) : A(a), B(b),
+			lastLambda(5), lastPC(.01) {}
 		void ApplyImpulse();
 		void PositionalCorrection();
 	private:

@@ -182,8 +182,8 @@ void World::addComposite(double x, double y)
 void World::addMagnet(double x, double y)
 {
 	Body* b = addBox(x, y, 1, 2, false);
-	Magnet* m1 = new Magnet(b, Vector2D(0, .8), 500, true);
-	Magnet* m2 = new Magnet(b, Vector2D(0, -.8), 500, false);
+	Magnet* m1 = new Magnet(b, Vector2D(0, .8), 1, true);
+	Magnet* m2 = new Magnet(b, Vector2D(0, -.8), 1, false);
 	solver.addMagnet(m1);
 	solver.addMagnet(m2);
 }

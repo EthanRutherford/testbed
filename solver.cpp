@@ -233,11 +233,11 @@ void Solver::checkCol()
 		//normal collisions
 		Body* A = it->A->body;
 		Body* B = it->B->body;
+		if (A == B)
+			continue;
 		if (A->mass.iM == 0 && B->mass.iM == 0)
 			continue;
-		if (A->filtergroup == B->filtergroup and A->filtergroup != 0)
-			continue;
-		if (A == B)
+		if (!(A->filtergroup - B->filtergroup) and A->filtergroup)
 			continue;
 		Manifold m(it->A, it->B);
 		m.Solve();

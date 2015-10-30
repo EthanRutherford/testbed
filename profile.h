@@ -52,7 +52,7 @@ inline double elapsedTime()
 	if (start.QuadPart == 0)
 	{
 		QueryPerformanceCounter(&start);
-		return double(start.QuadPart) / freq.QuadPart;
+		return 0;
 	}
 	QueryPerformanceCounter(&now);
 	return double(now.QuadPart - start.QuadPart) / freq.QuadPart;
