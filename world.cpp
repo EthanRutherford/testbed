@@ -170,9 +170,11 @@ void World::addDynBridge(Vector2D a, Vector2D b)
 	double dist = mag(a - b);
 	double l = dist / int(dist/2);
 	double lp = 2;
+	double xdiff = (b.x-a.x+2) / (dist/2);
+	double ydiff = (b.y-a.y) / (dist/2);
 	for (int i = 1; i < dist/2; i++)
 	{
-		Body* bc = addBox(x+(i*l), a.y + (i*(b.y-a.y)/(dist/2)), l, .5, false);
+		Body* bc = addBox(x+(i*xdiff), a.y + (i*ydiff), l, .5, false);
 		RevJoint* j = new RevJoint(bp, bc, Vector2D(lp/2, 0), Vector2D(-l/2, 0));
 		solver.addJoint(j);
 		bp = bc;

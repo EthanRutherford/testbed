@@ -164,6 +164,7 @@ massData mPolygon::ComputeMass(double density)
 {
 	radius = 0;
 	massData mass;
+	mass.Zero();
 	double area = 0;
 	double I = 0;
 	const double k_inv3 = 1.0 / 3.0;
